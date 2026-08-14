@@ -43,13 +43,24 @@
 
 ![表格](https://nav.shuichanga.cn/img/demo2.png)
 
-## 安装布署
+## 安装部署
 
-（给和我一样的小白）
 
-#### 一、布署
+> **关于 SPA 路由回退**
+>
+> 项目使用 Vue Router 的 History 模式，直接访问 `/settings`、`/about`、`/search` 等子路径刷新时，需要服务器把这些路径回退到 `index.html` 交给前端路由处理。
+>
+> 项目已在 [`public/_redirects`](./public/_redirects) 中内置回退规则：
+>
+> ```
+> /*    /index.html   200
+> ```
+>
+> Cloudflare Pages 与腾讯 EdgeOne Pages 均会自动识别此文件，**无需额外配置**。其它静态托管平台（如 Vercel、Netlify）也兼容此约定。
 
-我自己是使用的腾讯 EdgeOne Pages 布署的，免费快速。
+### 方案一：使用腾讯 EdgeOne Pages 部署
+
+我自己是使用的腾讯 EdgeOne Pages 部署的，免费快速。
 
 1、Fork项目（<https://github.com/jianzhugo/Simple-Nav）>
 
@@ -66,7 +77,71 @@
 5、在项目设置中，将"环境变量"中的"VITE\_API\_PASSWORD"设置为你自己的密码。（用于直接增加网址功能）
 ![获取](https://nav.shuichanga.cn/img/mima.png)
 
-#### 二、改数据
+### 方案二：使用 Cloudflare Pages 部署
+
+[Cloudflare Pages](https://pages.cloudflare.com/) 提供免费的静态站点托管，自带全球 CDN，部署本项目步骤如下。
+
+#### 一、Fork 项目
+
+Fork 仓库：<https://github.com/jianzhugo/Simple-Nav>
+
+#### 二、连接 Git 仓库
+
+1. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com/)，左侧选择 **Workers & Pages**。
+2. 点击 **Create application** → **Pages** → **Connect to Git**。
+3. 授权 Cloudflare 访问你的 GitHub 账号，选择刚才 Fork 的仓库。
+
+#### 三、填写构建配置
+
+| 配置项 | 值 |
+| --- | --- |
+| Framework preset | `Vite` |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Root directory | （留空） |
+
+#### 四、配置环境变量
+
+在 **Settings → Environment variables** 中添加以下变量（Production 和 Preview 环境都建议配置）：
+
+| 变量名 | 说明 |
+| --- | --- |
+| `VITE_VIKA_API_KEY` | 维格云 API 密钥 |
+| `VITE_VIKA_DATASHEET_ID` | 维格云表格 ID |
+| `VITE_VIKA_VIEW_ID` | 维格云视图 ID |
+| `VITE_SUBMIT_PASSWORD` | 右上角直接增加网址功能的密码 |
+
+> ⚠️ **安全提示**：以 `VITE_` 前缀开头的变量会在构建时被打包进前端 JS，任何访问者都能在浏览器源码中看到。建议只填写**只读权限**的维格云 Token；如需隐藏写操作 Key，可改用 Cloudflare Pages Functions 做一层 API 代理（需自行改造）。
+
+#### 五、部署
+
+点击 **Save and Deploy**，等待构建完成即可获得 `xxx.pages.dev` 的访问域名。
+
+后续每次 push 到默认分支会自动触发部署；也可绑定自定义域名（**Custom domains** 中添加，Cloudflare 会自动签发 SSL 证书）。
+
+#### 六、SPA 路由（已内置，无需操作）
+
+项目根目录的 `public/_redirects` 会在构建时被拷贝到 `dist/_redirects`，Cloudflare Pages 会自动识别并应用其中的回退规则，访问 `/settings`、`/about`、`/search` 直接刷新不会出现 404。
+
+#### 可选：使用 Wrangler 命令行部署
+
+如不想绑定 Git，可本地构建后用 `wrangler` 直接上传：
+
+```bash
+# 安装 wrangler
+npm install -g wrangler
+
+# 登录 Cloudflare
+wrangler login
+
+# 本地构建
+npm run build
+
+# 上传部署
+wrangler pages deploy dist
+```
+
+### 改数据
 
 1、在维基云注册账号，新建表格。表格格式如下
 
