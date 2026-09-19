@@ -23,7 +23,7 @@
           :class="{ 'hidden': isCollapsed }"
           @click.native="resetCategory"
         >
-          Simple NAV
+          sanyan NAV
         </router-link>
       </div>
 
