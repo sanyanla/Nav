@@ -65,7 +65,7 @@
       
       <div class="relative group w-8 h-8 flex items-center justify-center">
         <a 
-          href="https://github.com/jianzhugo/sanyan-Nav" 
+          href="https://github.com/sanyanla/Nav" 
           target="_blank"
           class="w-full h-full flex items-center justify-center rounded-full text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-300"
         >
